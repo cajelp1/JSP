@@ -1,0 +1,44 @@
+@charset "UTF-8";
+.icon,.tit{
+	font-size: 25px;
+}
+.col-3,h3{
+	text-align: center;
+}
+.arrow,.step{
+    margin-top: 10px;
+}
+#arrow{
+	width: 0px;height: 0px;
+	border-top: 30px solid transparent;
+ 	border-left: 60px solid blue;
+	border-bottom: 30px solid transparent;
+	padding: 0px;
+}
+.txt{
+	margin: 0px;
+}
+#alrnr{
+	color: white;
+	background: blue;
+}
+.title{
+	text-align: center;
+}
+.regist_member{
+	padding-left: 35px;
+	padding-right: 35px;
+}
+.col-form-label{
+	text-align: right;
+}
+.btn-append{
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 40px;
+    border-top-width: 0px;
+    border-bottom-width: 0px;	
+}
+.img-form{
+	padding-bottom: 15px;
+}

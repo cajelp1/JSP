@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+        xmlns="http://www.springframework.org/schema/security"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+    <http pattern="/resources/**" security="none"/>
+
+    <authentication-manager>
+        <authentication-provider ref="authenticator"/>
+    </authentication-manager>
+    <http use-expressions="true" pattern="/**">
+        <access-denied-handler ref="UserDeniedHandler"/>
+        <intercept-url pattern="dsp/sensor/dangeDataMaxNo" access="permitAll"/>
+        <intercept-url pattern="/commons/**" access="permitAll"/>
+        <intercept-url pattern="/dsp/main" access="permitAll"/>
+        <intercept-url pattern="/dsp/admin/**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/dsp/room/**" access="permitAll"/>
+        <intercept-url pattern="/pms/notHistory/realTimeMessage*" access="permitAll"/>
+        <intercept-url pattern="/pms/team/pds/list" access="permitAll"/>
+        <intercept-url pattern="/**" access="permitAll" />
+        <intercept-url pattern="/pms/**" access="permitAll" />
+        <form-login login-page="/commons/login"
+                    login-processing-url="/commons/login"
+                    username-parameter="email"
+                    password-parameter="password" default-target-url="/"
+                    authentication-success-handler-ref="loginSuccessHandler"
+                    authentication-failure-handler-ref="loginFailureHandler"/>
+        <logout logout-url="/commons/logout" invalidate-session="true"
+                delete-cookies="JSESSIONID"
+                success-handler-ref="logoutSuccessHandler"/>
+        <session-management
+                invalid-session-url="/">
+            <concurrency-control
+                    expired-url="/commons/loginExpired" max-sessions="10"
+                    session-registry-ref="sessionRegistry"/>
+        </session-management>
+    </http>
+    <beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
+    <beans:bean id="authenticator" class="com.pumsac.security.CustomAuthentication"/>
+    <beans:bean id="loginSuccessHandler" class="com.pumsac.security.LoginSuccessHandler"/>
+    <beans:bean id="loginFailureHandler" class="com.pumsac.security.LoginFailureHandler"
+                p:defaultFailureUrl="/commons/login" p:useForward="true"/>
+    <beans:bean id="logoutSuccessHandler" class="com.pumsac.security.CustomLogoutSuccessHandler"/>
+    <beans:bean id="UserDeniedHandler" class="com.pumsac.security.UserDeniedHandler"/>
+
+</beans:beans>
+
+
+

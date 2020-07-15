@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="projectCommon-mapper">
+
+
+	<select id="selectProejctIdForDual" resultType="int" parameterType="proMaster">
+		SELECT project_seq.nextval
+		FROM dual
+	</select>
+	
+	<update id="insertProjectToProMasterTable" parameterType="proMaster">
+		INSERT INTO pro_master (projectId, projectName, projectExplain, startDate, endDate, regDate, register)
+		VALUES (#{projectId}, #{projectName}, #{projectExplain}, #{startDate}, #{endDate}, SYSDATE, #{register})
+	</update>
+	
+	<update id="insertProjectMemberToProTeamTable" parameterType="proTeam">
+		INSERT INTO pro_team
+		VALUES (#{projectId}, #{memberId}, #{job}, SYSDATE)
+	</update>
+	
+	<select id="selectProjectList" parameterType="String" resultType="proTeam">
+		SELECT * 
+		FROM pro_team
+		WHERE memberid = #{email}
+	</select>
+	
+	<update id="disableProject" parameterType="int">
+		UPDATE pro_master
+		SET deleteyn = y
+		WHERE projectid = #{projectId}
+	</update>
+	
+	<update id="enableProject" parameterType="int">
+		UPDATE pro_master
+		SET deleteyn = n
+		WHERE projectid = #{projectId}
+	</update>
+	
+	<select id="selectProjectMaster" parameterType="int" resultType="proMaster">
+		SELECT *
+		FROM pro_master
+		WHERE projectId = #{projectId}
+	</select>
+	
+	<select id="selectProjectTeamMember" parameterType="int" resultType="proTeam">
+		SELECT p.projectid as projectId
+				,p.memberid as memberId
+				,p.job as job
+				,c.name as positionName
+				,p.regdate as regDate
+		FROM pro_team p, commoncode c
+		WHERE p.projectid = #{projectId}
+		AND p.job = c.code
+		AND p.job NOT IN ('120')
+	</select>
+	
+	<select id="selectBoardName" parameterType="proBoardMaster" resultType="proBoardMaster">
+		SELECT *
+		FROM pro_boardmaster
+		WHERE boardtype = #{boardType}
+		AND projectid = #{projectId}
+	</select>
+	<update id="createSeqByProjectId" parameterType="proBoardMaster">
+		create sequence  #{projectId}||'_'||#{boardName}
+	</update>
+	<update id="insertBoardSeqByProjectInfo" parameterType="proBoardMaster">
+		insert into BOARDSEQMASTER VALUES(#{projectId},#{boardName}, sysdate||'_'||#{boardName}||'_'||#{projectId})
+	</update>
+	<select id="selectNoticeByProjectId" parameterType="proboardinfo" resultType="proboardinfo">
+		select
+		*
+		from
+		proboardinfo
+		where
+		projectId=#{projectId}
+		and boardType=#{boardType}
+	</select>
+	
+	<select id="selectFileInfo" parameterType="Integer" resultType="attach">
+		SELECT * 
+		FROM attachfile
+		WHERE no = #{no}
+	</select>
+	
+	<update id="updateProjectManager" parameterType="proTeam">
+		UPDATE pro_team
+		SET job = '110'
+		WHERE projectid = #{projectId}
+		AND memberid = #{memberId}
+	</update>
+	
+	<update id="updateProjectManagertoUser" parameterType="proTeam">
+		UPDATE pro_team
+		SET job = '100'
+		WHERE projectid = #{projectId}
+		AND memberid = #{memberId}
+	</update>
+	
+	<update id="updateProjectRegister" parameterType="proMaster">
+		MERGE INTO pro_master p
+		USING dual
+		ON
+		((SELECT register
+		FROM pro_master
+		WHERE projectid = #{projectId})
+		<![CDATA[
+		<>
+		]]>
+		(SELECT memberid
+		FROM pro_team
+		WHERE projectid = #{projectId}
+		AND job = 110))
+		WHEN MATCHED THEN
+		UPDATE SET p.register = (SELECT memberid
+		FROM pro_team
+		WHERE projectid = #{projectId}
+		AND job = 110)
+		WHERE projectid= #{projectId}
+	</update>
+	
+	<update id="insertProjectTeamTable" parameterType="proTeam">
+		MERGE INTO pro_team t
+		USING dual ON(
+		(SELECT projectid
+		FROM pro_team
+		WHERE projectid = #{projectId}) = #{projectId}
+		)
+		WHEN NOT MATCHED THEN
+		INSERT(job, memberid,projectid, regdate)
+		VALUES (#{job}, #{memberId}, #{projectId}, SYSDATE)
+	</update>
+	
+	
+	<update id="updateProjectComplete" parameterType="Integer">
+		UPDATE pro_master
+		SET completeYn = 'y'
+		WHERE projectId = #{projectId}
+	</update>
+	
+	<!-- 프로젝트 생성시 자료실 생성하는 쿼리 -->
+	<update id="insert_pro_board" parameterType="proBoardMaster">
+		INSERT INTO pro_boardmaster
+		(projectid, boardname, boardtype, fileyn, replyyn, filedownloadyn, register, regdate)
+		VALUES(#{projectId}, #{boardName}, #{boardType}, 'y', 'y', 'y', #{register}, SYSDATE)
+	</update>
+	
+	
+</mapper>

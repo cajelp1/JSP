@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="pms-team-noticboard-mapper">
+        <sql id="search">
+            <if test="searchType == 't'.toString()">
+                and title like '%'||#{keyword}||'%'
+            </if>
+            <if test="searchType == 'w'.toString()">
+                and writer like '%'||#{keyword}||'%'
+            </if>
+            <if test="searchType == 'c'.toString()">
+                and content like '%'||#{keyword}||'%'
+            </if>
+            <if test="searchType == 'tc'.toString()">
+                and (
+                title like '%'||#{keyword}||'%'
+                or
+                content like
+                '%'||#{keyword}||'%'
+                )
+            </if>
+            <if test="searchType == 'cw'.toString()">
+                and (
+                writer like '%'||#{keyword}||'%'
+                or
+                content like
+                '%'||#{keyword}||'%'
+                )
+            </if>
+            <if test="searchType == 'tcw'.toString()">
+                and (
+                title like '%'||#{keyword}||'%'
+                or
+                writer like
+                '%'||#{keyword}||'%'
+                or
+                content like '%'||#{keyword}||'%'
+                )
+            </if>
+        </sql>
+        <!--
+    SELECT * FROM ( SELECT rownum rn, TB.* FROM (
+            select *From PROJECTNOTICEBOARD
+        ORDER BY  NO
+            ) TB WHERE 1=1
+            ) WHERE rn BETWEEN  1 AND 10
+
+
+
+        -->
+        <select id="selectSearchNoticeList" resultType="pronoticeboard">
+            select
+            *
+            from
+            projectnoticeboard
+            where 1=1
+            and projectId=#{projectId}
+            <include refid="search"/>
+
+            order by no desc
+
+
+        </select>
+
+        <select id="selectSearchNoticeListCount" resultType="int">
+            <![CDATA[
+                select
+                count(*)
+                from
+                projectnoticeboard
+                where 1=1
+                   and projectId=#{projectId}
+            ]]>
+            <include refid="search"/>
+            order by no desc
+        </select>
+        <select id="selectByNo" parameterType="int"
+                resultType="pronoticeboard">
+            select
+            *
+            from
+            projectnoticeboard
+            where no=#{no}
+        </select>
+        <select id="selectprojectNoiceBoardNextVal" resultType="int">
+            SELECT
+            projectNoiceBoard_seq.nextval FROM dual
+        </select>
+        <select id="selectProjectNoticeBoardCurrentval" resultType="int">
+            SELECT
+            projectNoiceBoard_seq.currval FROM dual
+        </select>
+        <update id="insertNoticeBoard" parameterType="pronoticeboard">
+            insert
+            into
+            projectnoticeboard
+            values(#{no},#{projectId},#{title},#{content},0,#{writer},sysdate,'n')
+        </update>
+        <update id="insertNoticeAttach" parameterType="pronoticeattach">
+            insert
+            into
+            projectnoticeattacfile
+            values(#{no},#{attachDirectory},#{storedFilename},#{originFilename},#{extension},#{fileSize},sysdate)
+        </update>
+        <select id="selectNoticeAttachByOriginFileName" parameterType="str" resultType="pronoticeattach">
+            select
+            *
+            from
+            projectnoticeattacfile
+            where originfilename=#{originFilename}
+            </select>
+
+        <select id="selectNoticeAttachByNo" parameterType="int" resultType="pronoticeattach">
+        select
+        *
+        from
+        projectnoticeattacfile
+        where no=#{no}
+        </select>
+        <update id="viewCountIncrease" parameterType="int">
+            update
+            projectnoticeboard
+            set viewcount=viewcount+1
+            where no=#{no}
+        </update>
+        <delete id="deleteNoticeAttachByNo" parameterType="int">
+            delete
+            from
+            projectnoticeattacfile
+            where no=#{no}
+        </delete>
+        <select id="selectJobByProjectId" parameterType="proTeam" resultType="int">
+            select job
+            from pro_team
+            where projectid=#{projectId}
+            And memberid=#{memberId}
+        </select>
+        <update id="deleteByNo" parameterType="int">
+            delete
+            from
+            projectnoticeboard
+            where no=#{no}
+        </update>
+        <select id="selectEmailByProjectId" parameterType="int" resultType="member">
+            select memberId as email
+            from pro_team
+            where projectid=#{projectId}
+        </select>
+    </mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin-mapper">
+	
+	<sql id="searchMeetingRoom">
+		<if test='searchType.equals("n")'>
+		and roomName like '%'||#{keyword}||'%'
+		</if>
+		<if test='searchType.equals("a")'>
+		and (address like '%'||#{keyword}||'%'
+		or detailAddress like '%'||#{keyword}||'%')
+		</if>
+		<if test='searchType.equals("p")'>
+		and capacity = #{keyword}
+		</if>
+	</sql>
+	
+	<select id="selectMeetingRoomList" resultType="com.pumsac.command.MeetingRoomJusoCommand">
+		SELECT m.no roomNo, roomName, capacity, pricePerDay, address, detailAddress, latitude, longitude, jusoNo, regdate, register, deleteyn,
+		j.no realJusoNo, city, area, detail
+		FROM meetingRoomInfo m, jusoMaster j
+		WHERE m.jusono = j.no
+		<include refid="searchMeetingRoom" />
+		ORDER BY m.no desc
+	</select>
+	
+	<select id="countMeetingRoomList" resultType="int">
+		SELECT count(*)
+		FROM meetingRoomInfo
+		WHERE 1=1
+		<include refid="searchMeetingRoom" />
+	</select>
+	
+	<select id="selectMeetingRoomDetail" parameterType="int" resultType="com.pumsac.command.MeetingRoomJusoCommand">
+		SELECT m.no roomNo, roomName, capacity, latitude, longitude, pricePerDay, address, detailaddress, regdate, jusoNo, register, deleteyn,
+		j.no realJusoNo, city, area, detail
+		FROM meetingRoomInfo m, jusoMaster j
+		WHERE m.jusoNo = j.no
+		AND m.no=#{no}
+	</select>
+	
+	<select id="getDetailImgByRoomNo" parameterType="int" resultType="MeetingRoomAttachFile">
+		SELECT * 
+		FROM MeetingRoomAttachFile
+		WHERE roomNo = #{roomNo}
+		AND profileyn = 'n'
+	</select>
+	
+	<select id="selectMeetingRoomProfileFileByRoomNo" parameterType="int" resultType="MeetingRoomAttachFile">
+		SELECT * 
+		FROM MeetingRoomAttachFile
+		WHERE roomNo = #{roomNo}
+		AND profileyn = 'y'
+	</select>
+	
+	<select id="selectMeetingRoomSeq" resultType="int">
+		SELECT meetingRoomInfo_seq.nextval
+		FROM dual
+	</select>
+	
+	<update id="insertMeetingRoomInfo" parameterType="meetingRoom">
+		INSERT INTO meetingRoomInfo(no, latitude, longitude, address, detailaddress, regdate,
+		jusoNo, capacity, roomName, register, deleteyn, priceperday)
+		VALUES(#{no}, #{latitude}, #{longitude}, #{address}, #{detailAddress}, sysdate,
+			#{jusoNo}, #{capacity}, #{roomName}, #{register}, 'n', #{pricePerDay})
+	</update>
+	
+	<update id="updateMeetingRoomInfo" parameterType="meetingRoom">
+		UPDATE meetingRoomInfo SET
+		latitude=#{latitude}, longitude=#{longitude}, address=#{address}, detailaddress=#{detailAddress},
+		roomName=#{roomName}, capacity=#{capacity}, register=#{register}, pricePerDay=#{pricePerDay},
+		jusoNo=#{jusoNo}
+		WHERE no=#{no}
+	</update>
+	
+	<update id="deleteMeetingRoomInfo" parameterType="meetingRoom">
+		UPDATE meetingroominfo SET
+		deleteyn = #{deleteyn}
+		WHERE no = #{no}
+	</update>
+	
+	<!-- area를 가지고 juso no값 가져오기 -->
+	<select id="getJusoNoByArea" parameterType="str" resultType="int">
+		SELECT no
+		FROM jusomaster
+		WHERE area = #{area}
+	</select>
+	
+	
+	<!-- attachFile 관련 -->
+	
+	<!-- seq 가져오기 -->
+	<select id="selectMeetingRoomAttachSeq" resultType="int">
+		SELECT meetingRoomAttachFile_seq.nextval
+		FROM dual
+	</select>
+	
+	<!-- 파일 저장하기 -->
+	<update id="insertMeetingRoomAttachFile" parameterType="meetingRoomAttachFile">
+		INSERT INTO 
+		meetingRoomAttachFile(no, roomNo, fileName, originFileName, uploadPath, profileyn, filesize)
+		VALUES (#{no},#{roomNo},#{fileName},#{originFileName},#{uploadPath},#{profileyn},#{fileSize})
+	</update>
+	
+	<select id="getAttachFileListByRoomNo" parameterType="int" resultType="meetingRoomAttachFile">
+		SELECT *
+		FROM meetingroomattachfile
+		WHERE roomno = #{roomNo}
+	</select>
+	
+	<!-- 파일 삭제하기 -->
+	<update id="deleteAllMeetingRoomAttachFiles" parameterType="int">
+		delete from meetingRoomAttachFile
+		where roomNo=#{roomNo}
+	</update>
+	
+	<update id="deleteMeetingRoomAttachFileByNo" parameterType="int">
+		delete from meetingRoomAttachFile
+		where no=#{no}
+	</update>
+	
+	<!-- 수정시 파일 하나만 삭제 -->
+	<update id="deleteMeetingRoomAttachByOriginFileName" parameterType="meetingRoomAttachFile">
+		DELETE FROM meetingroomattachfile
+		WHERE roomno = #{roomNo}
+		AND originfilename = #{originalFileName}
+	</update>
+	
+	<!-- 상세 이미지 가져오기 -->
+	<select id="selectAttachFileByNo" parameterType="int" resultType="meetingRoomAttachFile">
+		SELECT *
+		FROM meetingroomattachfile
+		WHERE no = #{no}
+	</select>
+	 <select id="selectPrivacyInfo" resultType="admincommon">
+		 SELECT
+		 *
+		 FROM
+		 admincommon
+		 WHERE
+	 </select>
+	<update id="updatePrivacy" parameterType="admincommon">
+		update admincommon
+		set content=#{content}
+		where no=1
+	</update>
+</mapper>
+
+
+
+
+

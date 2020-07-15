@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="personalSchedule-mapper">
+
+	<select id="selectSeqToPersonalSchedual" resultType="Integer">
+		SELECT PER_SCHEDULE_SEQ.nextval FROM dual
+	</select>
+	
+	<sql id="search">
+		<if test="cri.searchType != null and cri.searchType == 't'.toString()">
+			and title LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType != null and cri.searchType == 'd'.toString()">
+		<![CDATA[
+			AND startdate <= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+			AND enddate >= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="cri.searchType != null and cri.searchType == 'sd'.toString()">
+			and TO_CHAR(startDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType != null and cri.searchType == 'ed'.toString()">
+			and TO_CHAR(endDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+	</sql>
+	
+	<select id="selectPersonalScheduleAllCountForAdmin" parameterType="personalSchedule" resultType="Integer">
+		SELECT count(*)
+		FROM per_schedule
+		WHERE projectId = #{projectId}
+	</select>
+	
+	<select id="selectPersonalScheduleAllForAdmin" parameterType="hashmap" resultType="personalSchedule">
+		SELECT * 
+		FROM per_schedule
+		WHERE projectId = #{personalScheduleVO.projectId}
+		<include refid="search" />
+		ORDER BY no DESC
+	</select>
+
+	<select id="selectPersonalScheduleCount" parameterType="personalSchedule" resultType="Integer">
+		SELECT count(*)
+		FROM per_schedule
+		WHERE projectId = #{projectId}
+		AND memberId = #{memberId}
+	</select>
+
+	<select id="selectPersonalScheduleList" parameterType="hashmap" resultType="personalSchedule">
+		SELECT * 
+		FROM per_schedule
+		WHERE projectId = #{personalScheduleVO.projectId}
+		AND memberId = #{personalScheduleVO.memberId}
+		<include refid="search" />
+		ORDER BY no DESC
+	</select>
+
+	<insert id="insertPersonalSchedule" parameterType="personalSchedule">
+		INSERT INTO per_schedule(
+			no
+			,projectId
+			,title
+			,content
+			,startDate
+			,endDate
+			,color
+			,charger
+			,memberId
+			,processPercent
+			,processStaues
+			,approvalYn
+			,regDate
+		)
+		VALUES (
+			#{no}
+			,#{projectId}
+			,#{title}
+			,#{content}
+			,#{startDate}
+			,#{endDate}
+			,#{color}
+			,#{charger}
+			,#{memberId}
+			,#{processPercent}
+			,#{processStaues}
+			,#{approvalYn}
+			,SYSDATE
+		)
+	</insert>
+	<select id="selectDetailPersonalSchedule" parameterType="int" resultType="personalSchedule">
+		SELECT *
+		FROM per_schedule
+		WHERE no = #{no}
+	</select>
+	
+	<update id="updatePersonalScheduleByUser" parameterType="personalSchedule">
+		UPDATE per_schedule
+		SET processpercent = #{processPercent}, content = #{content}, updatedate = SYSDATE
+		WHERE no = #{no}
+	</update>
+	
+	<update id="updatePersonalScheduleByAdmin" parameterType="personalSchedule">
+		UPDATE per_schedule
+		SET title = #{title}, content = #{content}, charger = #{charger}, 
+			startdate = #{startDate}, enddate = #{endDate}, color = #{color}, 
+			processpercent = #{processPercent}, updatedate = SYSDATE
+		WHERE no = #{no} 
+	</update>
+	
+	<update id="updatePersonalScheduleStatus" parameterType="personalSchedule">
+		UPDATE per_schedule
+		SET approvalyn = #{approvalYn},
+			processStaues = ${processStaues},
+			updatedate = SYSDATE, 
+			reason = #{reason}
+		WHERE no = #{no}
+	</update>
+	
+	<update id="updateCompleteTaskStatus" parameterType="personalSchedule">
+		UPDATE per_schedule
+		SET approvalyn = #{approvalYn},
+		processStaues = ${processStaues},
+		updatedate = SYSDATE
+		WHERE no = #{no}
+	</update>
+	
+	<update id="deleteTaskByAdmin" parameterType="int">
+		DELETE FROM per_schedule
+		WHERE no = #{no}
+	</update>
+	
+	<select id="selectTaskForProjectManager" parameterType="personalSchedule" resultType="personalSchedule">
+		SELECT *
+		FROM per_schedule
+		WHERE projectid = #{projectId}
+		AND memberid = #{memberId}
+	</select>
+</mapper>

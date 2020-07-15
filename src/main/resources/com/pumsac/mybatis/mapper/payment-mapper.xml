@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="payment-mapper">
+
+    <resultMap id="meetingRoom" type="meetingRoom">
+        <result column="no" property="no"/>
+    </resultMap>
+    <resultMap id="reservation" type="payment">
+        <result column="no" property="no"/>
+        <result column="register" property="register"/>
+        <result column="amount" property="amount"/>
+        <result column="meetingNo" property="meetingNo"/>
+        <result column="projectId" property="projectId"/>
+        <result column="startDate" property="startDate"/>
+        <result column="endDate" property="endDate"/>
+        <result column="regDate" property="regDate"/>
+        <collection property="meetingRoom" resultMap="meetingRoom"/>
+
+    </resultMap>
+    <insert id="insertPayment" parameterType="payment">
+    insert into
+    reservation
+    values(#{no},#{amount},#{meetingNo},#{startDate},#{endDate},730,#{projectId},#{register},sysdate)
+
+</insert>
+    <select id="getReservateSeqNetxval" resultType="int">
+        select
+        reservate_seq.nextval
+        from
+        dual
+    </select>
+    <select id="selectReservationByMeetingRoomNo" parameterType="int" resultType="hashMap">
+        SELECT
+         *
+        FROM  meetingroominfo a,reservation b
+        where
+        a.no=b.meetingNo
+        and b.meetingNo=#{no}
+        
+    </select>
+    <select id="selectReservationCheckByMeetingRoomNo" resultType="int" parameterType="payment">
+        Select COUNT(*) FROM (
+            SELECT *FROM RESERVATION
+            where
+            STARTDATE<![CDATA[ < ]]>TO_DATE(#{endDate},'yyyy-MM-dd')
+            and ENDDATE<![CDATA[ > ]]> TO_DATE(#{startDate},'yyyy-MM-dd')
+            and MEETINGNO=#{no}
+            )
+
+     </select>
+    <select id="selectProjectInfoById" resultType="project" parameterType="member">
+        select  PROJECTNAME,projectID from project WHERE  MEMBERID=#{email}
+    </select>
+    <!--  -->
+    <select id="getReservationList" parameterType="str" resultType="com.pumsac.vo.ReservationForMyPageVO">
+	    SELECT *
+		FROM reservation_mypage
+		WHERE register = #{email}
+		AND processtatus = 730
+		AND SYSDATE <![CDATA[ < ]]> startdate
+    </select>
+
+    <update id="deleteReservationMeetingRoom" parameterType="int">
+    	UPDATE reservation
+    	SET
+    	processtatus = 750
+    	WHERE no = #{no}
+    </update>
+    <select id="selectPricePerDayByno" parameterType="int" resultType="int">
+        select
+        priceperday
+        from
+        meetingroominfo
+        where
+        no=#{no}
+    </select>
+</mapper>
+
+
+
+
+

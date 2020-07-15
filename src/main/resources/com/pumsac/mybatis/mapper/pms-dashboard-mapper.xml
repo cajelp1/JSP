@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms-dashboard-mapper">
+
+    <resultMap id="proTeam" type="proteam">
+        <result column="PROJECTID" property="projectId"/>
+        <result column="MEMBERID" property="memberId"/>
+        <result column="JOB" property="job"/>
+        <result column="REGDATE" property="regDate"/>
+    </resultMap>
+    <resultMap id="proMaster" type="promaster">
+        <result column="PROJECTID" property="projectId"/>
+        <result column="PROJECTNAME" property="projectName"/>
+        <result column="PROJECTEXPLAIN" property="projectExplain"/>
+        <result column="STARTDATE" property="startDate"/>
+        <result column="ENDDATE" property="endDate"/>
+        <result column="DELETEYN" property="deleteyn"/>
+        <result column="REGISTER" property="register"/>
+        <collection property="proTeam" resultMap="proteam"/>
+    </resultMap>
+    <resultMap type="hashMap" id="memberPercentMap">
+    	<result column="MEMBERID" property="memberId"/>
+    	<result column="PROJECTID" property="projectId"/>
+    	<result column="AVG" property="avg"/>
+    </resultMap>
+    
+    <sql id="orderByCondition">
+<trim prefix="ORDER BY">
+    <if test="orderByCondition=='projectname'.toString()">a.PROJECTNAME</if>
+    <if test="orderByCondition=='startdate'.toString()">a.STARTDATE</if>
+    <if test="orderByCondition=='enddate'.toString()">a.ENDDATE</if>
+</trim>
+    </sql>
+    <sql id="search">
+        <if test="searchType == 't'.toString()">
+            and PROJECTNAME like '%'||#{keyword}||'%'
+        </if>
+        <if test="searchType == 'w'.toString()">
+            and MEMBERID like '%'||#{keyword}||'%'
+        </if>
+    </sql>
+    
+    	<sql id="member_search">
+		<if test="searchType == 'e'.toString()">
+			AND email LIKE '%'||#{keyword}||'%'
+		</if>
+		<if test="searchType == 'n'.toString()">
+			AND name LIKE '%'||#{keyword}||'%'			
+		</if>
+		<if test="searchType == 'en'.toString()">
+			AND (
+				(email LIKE '%'||#{keyword}||'%')
+				OR
+				(name LIKE '%'||#{keyword}||'%')
+			)	
+		</if>
+	</sql>
+<!--    <select id="selectProTeamNatureJoinProMasterByProjectId" resultType="hashMap">
+		SELECT * FROM pro_master a, pro_team b
+		where a.PROJECTID=b.PROJECTID
+		ORDER  BY b.REGDATE
+	</select>-->
+    <select id="selectProTeamNatureJoinProMasterByProjectIdOrderByCondition"  parameterType="member" resultType="hashMap">
+        SELECT  a.PROJECTID, a.PROJECTNAME,a.STARTDATE, a.ENDDATE, a.REGISTER, b.MEMBERID 
+        FROM pro_master a ,pro_team b
+        where a.PROJECTID=b.PROJECTID
+        and  MEMBERID=#{memberId}
+
+        <include refid="search"/>
+        <include refid="orderByCondition"/>
+    </select>
+	
+	<select id="selectProjectInfoByProjcetId" parameterType="int" resultType="project">
+		SELECT *
+		FROM pro_master
+		WHERE projectid = #{projectId}
+	</select>
+	
+	<select id="selectProjectOfficialSchedule" parameterType="int" resultType="officialSchedule">
+		SELECT s.* 
+		FROM pro_master p , off_schedule s
+		where p.projectid=s.projectid
+		AND p.projectid = #{projectId}
+	</select>
+	
+	<select id="selectProjectTeamMember" parameterType="int" resultType="proTeam">
+		SELECT p.*
+		FROM pro_team p
+		WHERE p.projectid = #{projectId}
+		AND p.job NOT IN ('120')
+	</select>
+	
+	<select id="selectRecentPersonalSchedule" parameterType="int" resultType="personalSchedule">
+		SELECT *
+		FROM per_schedule
+		WHERE projectid=#{projectId}
+		ORDER BY regdate DESC
+	</select>
+	
+	<select id="selectCountPersonalSchedule" parameterType="int" resultType="int">
+		SELECT COUNT(*) cnt
+		FROM per_schedule
+		WHERE projectid=#{projectId}
+	</select>
+	
+	<select id="selectTotalProcessPercent" parameterType="int" resultType="java.lang.Float">
+		SELECT NVL(AVG(PROCESSPERCENT) , 300) totalpercent
+		FROM per_schedule
+		WHERE projectid = #{projectId}
+	</select>
+	
+	<select id="selectclosingPersonalSchedule" parameterType="int" resultType="personalSchedule">
+		SELECT *
+		FROM per_schedule
+		WHERE projectid=#{projectId}
+		<![CDATA[
+		AND enddate - SYSDATE < 7
+		]]>
+	</select>
+	
+	<select id="selectMemberProcessPercent"  parameterType="int" resultType="personalSchedule">
+		SELECT MEMBERID, AVG(processpercent) AVG
+		FROM per_schedule
+		WHERE projectid = #{projectId}
+		GROUP BY memberid
+	</select>
+	
+	<select id="selectWaitingCompletedScheduleList" parameterType="int" resultType="personalSchedule">
+		SELECT *
+		FROM PER_SCHEDULE
+		WHERE projectid = #{projectId}
+		AND processpercent = 100
+		AND APPROVALYN = 'n'
+	</select>
+	
+	<select id="selectProjectMember" parameterType="SearchCriteria" resultType="member">
+		SELECT m.*
+		FROM pro_team p, member m
+		WHERE projectid = #{projectId}
+		AND p.memberid = m.email
+		AND p.job NOT IN ('120')
+	</select>
+	
+	<update id="deleteProejectMember" parameterType="proTeam">
+		UPDATE pro_team
+		SET job = #{job}
+		WHERE projectId = #{projectId}
+		AND memberId = #{memberId}
+
+	</update>
+	
+	<select id="selectRegistrableProjectMember" parameterType="SearchCriteria" resultType="member">
+		SELECT *
+		FROM member
+		WHERE 1=1
+		<include refid="member_search" />
+		MINUS
+		SELECT m.*
+		FROM member m, pro_team t
+		WHERE m.email = t.memberid
+		AND t.projectid  = #{projectId}
+		<include refid="member_search" />
+		AND job NOT IN ('120')
+	</select>
+	
+	<update id="insertNewProjectMember" parameterType="proTeam">
+		MERGE INTO pro_team a
+		USING dual
+		ON ((SELECT job
+		FROM pro_team 
+		WHERE projectid = #{projectId}
+		AND memberid = #{memberId}) = 120)
+		WHEN MATCHED THEN
+		UPDATE SET job = 100
+		WHERE projectid = #{projectId}
+		AND memberid = #{memberId}
+		WHEN NOT MATCHED THEN
+		INSERT (a.projectId,a.memberId,a.job,a.regdate) VALUES (#{projectId}, #{memberId}, '100', SYSDATE)
+	</update>
+	
+	<select id="selectProjectManger" parameterType="int" resultType="str">
+		SELECT memberid
+		FROM pro_team
+		WHERE projectid = #{projectId}
+		AND job = 110
+	</select>
+	
+	<select id="selectCountProjectMemeberByProjectId" parameterType="SearchCriteria" resultType="int">
+		SELECT (SELECT COUNT(*)
+		FROM member
+		WHERE 1=1
+		<include refid="member_search" />
+		)-
+		(SELECT COUNT(*)
+		FROM member m, pro_team t
+		WHERE m.email = t.memberid
+		AND t.projectid  = #{projectId}
+		AND job NOT IN ('120')
+		<include refid="member_search" />) cnt
+        FROM dual
+	</select>
+	
+	<select id="selectCurrentCountProjectMemeberByProjectId" parameterType="int" resultType="int">
+		SELECT COUNT(*) cnt
+		FROM member m, pro_team t
+		WHERE m.email = t.memberid
+		AND t.projectid  = #{projectId}
+		AND job NOT IN ('120')
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="selectPersonalSchedule" parameterType="personalSchedule" resultType="personalSchedule">
+		select * 
+		from per_schedule
+		where projectId=#{projectId}
+		and memberId=#{memberId}
+	</select>
+	
+	
+	
+</mapper>
+
+
+
+
+

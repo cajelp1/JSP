@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="plan-mapper">
+	
+	<sql id="search">
+		<if test="cri.searchType == 't'.toString()">
+			and title like '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType == 'd'.toString()">
+		<![CDATA[
+			AND startdate <= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+			AND enddate >= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="cri.searchType == 'sd'.toString()">
+			and TO_CHAR(startDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType == 'ed'.toString()">
+			and TO_CHAR(endDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+	</sql>
+	
+	<!-- 일정 등록 -->
+	<update id="insertPersonalPlan" parameterType="plan">
+		INSERT INTO plan
+		(no, projectid, memberid, title, content, startdate, enddate, color, code, regdate, updatedate, address, detailaddress, latitude, longitude)
+		VALUES
+		(#{no}, #{projectId}, #{memberId}, #{title}, #{content}, 
+		TO_DATE(TO_CHAR(#{startDate}, 'yyyy-MM-dd') || #{fromTime}, 'yyyy-MM-ddHH24:MI'),
+		TO_DATE(TO_CHAR(#{endDate}, 'yyyy-MM-dd') || #{toTime}, 'yyyy-MM-ddHH24:MI'),
+		#{color}, #{code}, SYSDATE, SYSDATE , #{address}, #{detailAddress}, #{latitude},#{longitude})
+	</update>
+
+	<!-- 일정 조회 -->
+	<select id="selectTeamPlan" parameterType="plan" resultType="plan">
+		SELECT *
+		FROM plan
+		WHERE projectid = #{projectId}
+		AND code = #{code}
+	</select>
+	
+	<!-- 개인 일정 조회 -->
+	<select id="selectPersonalPlan" parameterType="plan" resultType="plan">
+		SELECT *
+		FROM plan
+		WHERE memberid = #{memberId}
+		AND code = #{code}
+	</select>
+	
+	<!-- 일정 상세 조회 -->
+	<select id="selectPlanDetail" parameterType="int" resultType="plan">
+		SELECT *
+		FROM plan
+		WHERE no = #{no}
+	</select>
+	
+	<!-- 일정 수정 -->
+	<update id="updatePlan" parameterType="plan">
+		UPDATE plan
+		SET title = #{title},
+		content = #{content},
+		startdate = #{startDate},
+		enddate = #{endDate},
+		color = #{color},
+		code = #{code},
+		updatedate = SYSDATE,
+		address = #{address},
+		detailaddress = #{detailAddress},
+		latitude = #{latitude},
+		longitude = #{longitude}
+		WHERE no = #{no}
+	</update>
+	
+	<!-- 일정 삭제 -->
+	<update id="deletePlan" parameterType="int">
+		DELETE plan
+		WHERE no = #{no}
+	</update>
+	
+	<select id="selectPlanSeq" resultType="int">
+		SELECT PLAN_SEQ.nextval
+		FROM dual
+	</select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 	member.picture -->
+    <bean id="memberProfileImage" class="java.lang.String">
+        <constructor-arg value="${member.picture.upload}"/>
+    </bean>
+
+    <bean id="meetingRoomPictures" class="java.lang.String">
+        <constructor-arg value="${meetingroom.picture.upload}"/>
+    </bean>
+
+    <bean id="teamNoticeBoard" class="java.lang.String">
+        <constructor-arg value="${team.notice.upload}"></constructor-arg>
+    </bean>
+
+    <bean id="siteNoticeBoard" class="java.lang.String">
+        <constructor-arg value="${site.notice.upload}"></constructor-arg>
+    </bean>
+
+    <!-- pds 업로드 경로 -->
+    <bean id="teamPdsUploadPath" class="java.lang.String">
+        <constructor-arg value="${team.pds.upload}"></constructor-arg>
+    </bean>
+    <bean id="imgPath" class="java.lang.String">
+        <constructor-arg value="/resources/uploadImg"></constructor-arg>
+    </bean>
+</beans>

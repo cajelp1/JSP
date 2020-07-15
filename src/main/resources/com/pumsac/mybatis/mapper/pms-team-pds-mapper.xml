@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms-pds-mapper">
+
+	<sql id="search">
+		<if test="cri.searchType != null and cri.searchType == 't'.toString()">
+			and title LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType != null and cri.searchType == 'c'.toString()">
+			and content LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType != null and cri.searchType == 'w'.toString()">
+			AND writer IN (
+		        SELECT email
+		        FROM member 
+		        WHERE nickname LIKE '%'||#{cri.keyword}||'%'
+		    )
+		</if>
+	</sql>
+
+	<select id="selectPdsList" parameterType="hashmap" resultType="proboard">
+		SELECT *
+		FROM pro_board 
+		WHERE boardName = #{master.boardName}
+		AND deleteYn = 'n'
+		<include refid="search"></include>
+		ORDER BY regDate DESC
+	</select>
+
+
+	<!-- 다음 시퀀스 가져오는 쿼리 -->
+	<select id="getNextProBoardSeq" resultType="int">
+		SELECT PRO_BOARD_SEQ.nextval
+		FROM dual
+	</select>
+	
+	<!-- 자료실 글 등록 --><!-- 파라미터 타입 쓰기 -->
+	<update id="registPds" parameterType="proboard">
+		INSERT INTO pro_board (boardname, no, title, content, writer, viewcnt, regdate, updatedate, deleteyn, fileopenyn)
+		VALUES (#{boardName}, #{no}, #{title}, #{content}, #{writer}, 0, SYSDATE, SYSDATE, 'n', #{fileOpenYn})
+	</update>
+	
+	<update id="updatePdsViewCnt" parameterType="Integer">
+		UPDATE pro_board
+		SET viewCnt = viewCnt+1
+		WHERE no = #{no}
+	</update>
+	
+	<select id="selectPdsDetail" parameterType="Integer" resultType="proboard">
+		SELECT *
+		FROM pro_board 
+		WHERE no = #{no} 
+	</select>
+	
+	<update id="updatePds" parameterType="proboard">
+		UPDATE pro_board
+		SET 
+			title = #{title}
+			,content = #{content}
+			,writer = #{writer}
+			,updateDate = SYSDATE
+			,fileOpenYn = #{fileOpenYn}
+		WHERE no = #{no}
+	</update>
+	
+	<update id="removePds" parameterType="Integer">
+		UPDATE pro_board
+		SET deleteYn = 'y'
+		WHERE no = #{no}
+	</update>
+	
+	
+	
+	
+	<!-- 프로젝트의 boardMaster를 list로 가져오기 -->
+	<select id="selectBoardMasterList" parameterType="int" resultType="proBoardMaster">
+		select *
+		from pro_boardMaster
+		where projectId=#{projectId}
+	</select>
+	
+</mapper>

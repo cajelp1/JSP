@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rooms-mapper">
+	
+	<!-- 전체 리스트 가져오기 -->
+	<select id="selectAllMeetingRooms" resultType="meetingRoom">
+		select * from meetingroominfo
+		where deleteyn = 'n'
+		order by no desc
+	</select>
+	
+	
+	<!-- 검색할 때 필요한 메뉴(주소) 가져오기 -->
+	<select id="selectJusoMasterArea" 
+	parameterType="juso" resultType="juso">
+		select *
+		from jusomaster
+		where city = #{city}
+	</select>
+	
+	
+	<sql id="searchMeetingRooms">
+		<if test='!capacity.equals("")'>
+		and capacity = #{capacity}
+		</if>
+		<if test='!city.equals("")'>
+		and jusono in (select no
+						from jusomaster
+						where city=#{city}
+			<if test='!area.equals("")'>
+						and area=#{area}
+			</if>
+						)
+		</if>
+	</sql>
+	<!-- 실제 검색 결과 리스트 가져오기 -->
+	<select id="selectMeetingRooms" parameterType="com.pumsac.command.CriteriaRoomList" resultType="meetingRoom">
+		select *
+		from meetingroominfo
+		where deleteyn = 'n'
+		<include refid="searchMeetingRooms" />
+		order by no desc
+	</select>
+	
+	<!-- 검색결과 리스트 총 갯수 세기 -->
+	<select id="countMeetingRooms" parameterType="com.pumsac.command.CriteriaRoomList" resultType="int">
+		select count(*)
+		from meetingroominfo
+		where deleteyn = 'n'
+		<include refid="searchMeetingRooms" />
+		order by no desc
+	</select>
+	
+	<!-- 사무실 디테일 사항 가져오기 -->
+	<select id="selectMeetingRoomDetail" parameterType="int" resultType="meetingRoom">
+		select *
+		from meetingroominfo
+		where no=#{no}
+	</select>
+	
+	<!-- List에서 프로필사진 가져오기 -->
+	<select id="selectOfficeProfileImg" resultType="com.pumsac.command.MainImageDTO">
+		SELECT roomname, address, capacity, detailaddress,a.filename
+		FROM meetingroominfo m, meetingroomattachfile a
+		WHERE deleteyn = 'n'
+		AND m.no = a.roomno
+		AND a.profileyn = 'y'
+	</select>
+	
+	<!-- detail에서 관련된 사진 다 가져오기 -->
+	<select id="selectMeetingRoomAttachFile" resultType="meetingRoomAttachFile">
+		SELECT * 
+		FROM MeetingRoomAttachFile
+		WHERE roomNo = #{roomNo}
+	</select>
+	
+</mapper>
+
+

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mainPage-mapper">
+
+	<select id="getRecentlyRegistedRoomProfileImg" resultType="com.pumsac.command.MainImageDTO">
+		SELECT roomname, address, capacity, detailaddress,a.filename
+		FROM meetingroomattachfile a,
+        	(SELECT rownum, m.*
+            FROM
+            	(SELECT *
+                FROM meetingroominfo
+                WHERE deleteyn = 'n'
+                ORDER BY regdate DESC) m
+			<![CDATA[
+            WHERE rownum < 4) r
+            ]]>      
+		WHERE a.roomno = r.no
+		AND a.profileyn = 'y'
+	</select>
+	
+	<select id="getSiteNoticeForMain" resultType="board">
+		SELECT rownum, a.*
+		FROM (SELECT *
+            FROM site_board
+            WHERE boardname = '공지사항'
+            AND SYSDATE BETWEEN startdate AND enddate
+            AND deleteyn = 'n'
+            ORDER BY viewcnt DESC) a
+		WHERE <![CDATA[ rownum < 6  ]]>
+	</select>
+
+</mapper>

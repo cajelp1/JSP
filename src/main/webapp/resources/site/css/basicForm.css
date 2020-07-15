@@ -1,0 +1,113 @@
+@charset "UTF-8";
+/* body {
+	background: #739CD4;
+} */
+*{
+	font-family:'Malgun Gothic';
+}
+.nav-link1{
+	font-weight: bold;
+}
+.nav-link{
+	font-weight: bold;
+}
+.container{
+	background: #FEFEFE;
+}
+
+.form {
+	width: 60%;
+	margin: 60px auto;
+	background: #E0EEF7;
+	padding: 60px 100px 80px 100px;
+	text-align: center;
+	-webkit-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+	box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+label {
+	display: block;
+	position: relative;
+	margin: 40px 0px;
+}
+
+.label-txt {
+	position: absolute;
+	top: -1.6em;
+	padding: 10px;
+	font-family: sans-serif;
+	font-size: .8em;
+	letter-spacing: 1px;
+	color: rgb(120, 120, 120);
+	transition: ease .3s;
+}
+
+.input, .input datepicker {
+	width: 100%;
+	padding: 10px;
+	background: transparent;
+	border: none;
+	outline: none;
+}
+
+.line-box {
+	position: relative;
+	width: 100%;
+	height: 2px;
+	background: #BCBCBC;
+}
+
+.line {
+	position: absolute;
+	width: 0%;
+	height: 2px;
+	top: 0px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: #C4FAF8;
+	transition: ease .6s;
+}
+
+.input:focus+.line-box .line {
+	width: 100%;
+}
+
+.label-active {
+	top: -3em;
+}
+
+button,.btn-sm {
+	display: inline-block;
+	padding: 12px 24px;
+	background: rgb(220, 220, 220);
+	font-weight: bold;
+	color: rgb(120, 120, 120);
+	border: none;
+	outline: none;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: ease .3s;
+}
+
+button:hover,.btn-sm {
+	background: #8BC34A;
+	color: #ffffff;
+}
+
+.custom-control-label {
+	display: inline;
+}
+.btn-sm{
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 44px;
+}
+.upload-form{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 31px;
+    border-top-width: 0px;
+    padding-top: 4px;
+}

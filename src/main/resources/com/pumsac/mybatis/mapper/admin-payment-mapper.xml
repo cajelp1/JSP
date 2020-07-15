@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin-payment-mapper">
+	
+	<sql id="searchPayment">
+		<if test='searchType.equals("e")'>
+		and r.register like '%'||#{keyword}||'%'
+		</if>
+		<if test='searchType.equals("n")'>
+		and m.name like '%'||#{keyword}||'%'
+		</if>
+		<if test='searchType.equals("m")'>
+		and i.roomName like '%'||#{keyword}||'%'
+		</if>
+		<if test='searchType.equals("p")'>
+		and r.processtatus = #{keyword}
+		</if>
+	</sql>
+	
+	<select id="selectReservationList" resultType="com.pumsac.command.ReservationDTO">
+		SELECT r.*, i.roomName meetingName, m.name registerName, m.nickname registerNickname
+		FROM reservation r, meetingRoomInfo i, member m 
+		where r.meetingNo = i.no
+		and r.register = m.email
+		<include refid="searchPayment" />
+		ORDER BY r.no desc
+	</select>
+	
+	<select id="countReservationList" resultType="int">
+		SELECT count(*)
+		FROM reservation r, meetingRoomInfo i, member m 
+		where r.meetingNo = i.no
+		and r.register = m.email
+		<include refid="searchPayment" />
+	</select>
+	
+	<select id="selectReservationDetail" parameterType="int" resultType="com.pumsac.command.ReservationDTO">
+		SELECT r.*, i.roomName meetingName, m.name registerName, m.nickname registerNickname, p.projectName
+		FROM reservation r, meetingRoomInfo i, member m, pro_master p
+		where r.meetingNo = i.no
+		and r.register = m.email
+		and r.projectId = p.projectId
+		and r.no=#{no}
+	</select>
+	
+	<update id="updateReservation">
+		UPDATE reservation SET processtatus = 750
+		where no=#{no}
+	</update>
+	
+</mapper>
+
+

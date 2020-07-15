@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="officalSchedule-mapper">
+
+	<select id="selectPlanSeq" resultType="Integer">
+		SELECT PLAN_SEQ.nextval
+		FROM dual
+	</select>
+
+	<sql id="search">
+		<if test="cri.searchType == 't'.toString()">
+			and title like '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType == 'd'.toString()">
+		<![CDATA[
+			AND startdate <= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+			AND enddate >= TO_DATE(#{cri.keyword}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="cri.searchType == 'sd'.toString()">
+			and TO_CHAR(startDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+		<if test="cri.searchType == 'ed'.toString()">
+			and TO_CHAR(endDate, 'YYYY-MM-DD') LIKE '%'||#{cri.keyword}||'%'
+		</if>
+	</sql>
+	
+	<select id="selectOfficalScheduleCount" parameterType="Integer" resultType="Integer">
+		SELECT count(*)
+		FROM plan
+        WHERE projectId = #{projectId}
+        AND code = 2
+	</select>
+	
+	<select id="selectOfficalScheduleListMap" parameterType="hashmap" resultType="plan">
+		SELECT * 
+		FROM plan
+		WHERE projectId = #{projectId}
+		AND code = 2
+		<include refid="search" />
+		ORDER BY no DESC
+	</select>
+	
+	
+	<update id="insertOffcialSchedule" parameterType="plan">
+		INSERT INTO plan
+		(no, projectid, memberid, title, content, startdate, enddate, color, code, regdate, updatedate, address, detailaddress, latitude, longitude)
+		VALUES
+		(#{no}, #{projectId}, #{memberId}, #{title}, #{content}, 
+		TO_DATE((#{startDate}) || (#{fromTime}), 'yyyy-MM-ddHH24:MI'),
+		TO_DATE((#{endDate}) || (#{toTime}), 'yyyy-MM-ddHH24:MI'),
+		#{color}, 2, SYSDATE, SYSDATE , #{address}, #{detailAddress}, #{latitude},#{longitude})
+	</update>
+	
+	<select id="selectDetailOfficialSchedule" parameterType="Integer" resultType="plan">
+		SELECT *
+		FROM plan
+		WHERE no = #{no}
+	</select>
+	
+	<update id="updateOffcialSchedule" parameterType="plan">
+		UPDATE plan
+		SET title = #{title},
+		content = #{content},
+		startdate = #{startDate},
+		enddate = #{endDate},
+		color = #{color},
+		code = 2,
+		updatedate = SYSDATE,
+		address = #{address},
+		detailaddress = #{detailAddress},
+		latitude = #{latitude},
+		longitude = #{longitude}
+		WHERE no = #{no}
+	</update>	
+	
+	<delete id="deleteOfficialSchedule" parameterType="Integer">
+		DELETE FROM plan
+		WHERE no = #{no}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<settings>
+		<!-- vo 에서 카멜 케이스 사용이 가능하게 하는 설정 ex) Stirng pumSac -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+	<typeAliases>
+		<typeAlias type="java.lang.String" alias="str" />
+		<typeAlias type="java.lang.Integer" alias="int" />
+		<typeAlias type="com.pumsac.vo.MemberVO" alias="member"/>
+		<typeAlias type="com.pumsac.vo.AttachFileVO" alias="attach"/>
+		<typeAlias type="com.pumsac.vo.BoardVO" alias="board"/>
+		<typeAlias type="com.pumsac.vo.JusoVO" alias="juso"/>
+		<typeAlias type="com.pumsac.vo.MeetingRoomVO" alias="meetingRoom"/>
+		<typeAlias type="com.pumsac.vo.MeetingRoomAttachFileVO" alias="meetingRoomAttachFile"/>
+		<typeAlias type="com.pumsac.vo.ProMasterVO" alias="proMaster"/>
+		<typeAlias type="com.pumsac.vo.ProTeamVO" alias="proTeam"/>
+		<typeAlias type="com.pumsac.vo.OfficialScheduleVO" alias="officialSchedule"/>
+		<typeAlias type="com.pumsac.vo.OffScheduleDetailVO" alias="officialScheduleDetail"/>
+		<typeAlias type="com.pumsac.vo.PersonalScheduleVO" alias="personalSchedule"/>
+		<typeAlias type="com.pumsac.vo.ProBoardVO" alias="proboard"/>
+		<typeAlias type="com.pumsac.vo.MenuVO" alias="menu"/>
+		<typeAlias type="com.pumsac.vo.ReplyVO" alias="reply"/>
+		<typeAlias type="com.pumsac.vo.ReservationVO" alias="reservation"/>		
+		<typeAlias type="com.pumsac.command.SearchCriteria" alias="SearchCriteria"/>
+		<typeAlias type="com.pumsac.vo.PaymentHistoryVO" alias="payment"/>
+		<typeAlias type="com.pumsac.vo.NotHistoryVO" alias="notHistory"/>
+		<typeAlias type="com.pumsac.vo.ProjectVO" alias="project"/>
+		<typeAlias type="com.pumsac.vo.ProBoardMasterVO" alias="proBoardMaster"/>
+		<typeAlias type="com.pumsac.vo.ProBoardInfoVO" alias="proboardinfo"/>
+		<typeAlias type="com.pumsac.vo.ProjectNoticeBoardVO" alias="pronoticeboard"/>
+		<typeAlias type="com.pumsac.vo.ProjectNoticeAttachFileVO" alias="pronoticeattach"/>
+		<typeAlias type="com.pumsac.vo.PlanVO" alias="plan"/>
+		
+		<typeAlias type="com.pumsac.vo.SensorInfoVO" alias="sensorInfo"/>
+		<typeAlias type="com.pumsac.vo.SetSensorVO" alias="setSensor"/>
+		<typeAlias type="com.pumsac.vo.PrjPsVO" alias="prjps"/>
+
+		<typeAlias type="com.pumsac.vo.AdminCommonVO" alias="admincommon"/>
+	</typeAliases>
+	
+	
+</configuration>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+    "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+    "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+	<definition name="default-layout" template="/WEB-INF/tiles/layouts/default-layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/pms/default-header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/pms/default-footer.jsp" />
+	</definition>
+
+	<definition name="dashboard-layout" template="/WEB-INF/tiles/layouts/dashboard-layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/pms/default-header.jsp" />
+	</definition>
+
+	<definition name="pms/team/notice/*.notice" extends="default-layout">
+		<put-attribute name="header"  value="/WEB-INF/tiles/pms/default-header.jsp"/>
+		<put-attribute name="body" value="/WEB-INF/views/pms/team/notice/{1}.jsp"/>
+	</definition>
+
+	
+	<definition name="pms/*.pms" extends="default-layout">
+		<put-attribute name="body" value="/WEB-INF/views/pms/{1}.jsp" />
+	</definition>
+	<definition name="pms/*/*.pms" extends="default-layout">
+		<put-attribute name="body" value="/WEB-INF/views/pms/{1}/{2}.jsp" />
+	</definition>
+	<definition name="pms/*/*/*.pms" extends="default-layout">
+		<put-attribute name="body" value="/WEB-INF/views/pms/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="pms_openWindow" template="/WEB-INF/tiles/layouts/openWindow-layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/pms/openWindow/openWindow_header.jsp"/>
+		<put-attribute name="footer" value="/WEB-INF/tiles/pms/openWindow/openWindow_footer.jsp"/>
+	</definition>
+	<definition name="pms/team/*/*.OpenWindow" extends="pms_openWindow">
+		<put-attribute name="body" value="/WEB-INF/views/pms/team/{1}/{2}.jsp" />
+	</definition>
+	<definition name="pms/team/*.OpenWindow" extends="pms_openWindow">
+		<put-attribute name="body" value="/WEB-INF/views/pms/team/{1}/{2}.jsp" />
+	</definition>
+	<definition name="pms/dashboard/*.OpenWindow" extends="pms_openWindow">
+		<put-attribute name="body" value="/WEB-INF/views/pms/dashboard/{1}.jsp" />
+	</definition>
+	
+	
+	<definition name="pms_calendar" template="/WEB-INF/tiles/layouts/calendar-layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/pms/calendar/calendar_header.jsp"/>
+		<put-attribute name="left" value="/WEB-INF/tiles/pms/calendar/calendar_left.jsp"/>
+		<put-attribute name="footer" value="/WEB-INF/tiles/pms/calendar/calendar_footer.jsp"/>
+	</definition>
+	<definition name="pms/team/*/*.Calendar" extends="pms_calendar">
+		<put-attribute name="body" value="/WEB-INF/views/pms/team/{1}/{2}.jsp" />
+	</definition>
+	<definition name="pms/*/*.Calendar" extends="pms_calendar">
+		<put-attribute name="body" value="/WEB-INF/views/pms/dashboard/{1}.jsp" />
+	</definition>
+	
+</tiles-definitions>

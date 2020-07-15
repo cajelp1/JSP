@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notHistory-mapper">
+
+	<sql id="search">
+		<if test="projectId != null and !projectId.equals('')">
+			AND projectId = #{projectId}
+		</if>
+		<if test="searchType == 'sender'.toString()" >
+			AND sender LIKE '%'||'#{keyword}'||'%'
+		</if>
+		<if test="searchType == 't'.toString()" >
+			AND title LIKE '%'||'#{keyword}'||'%'
+		</if>
+	</sql>
+
+	<select id="selectNotHistoryTotalCount" parameterType="String" resultType="Integer">
+		SELECT count(*)
+		FROM not_history
+		WHERE receiver = #{memberEmail}
+		<include refid="search" />
+	</select>
+	<select id="selectNotHistoryList" resultType="notHistory" parameterType="hashmap">
+		SELECT *
+		FROM not_history
+		WHERE receiver = #{memberEmail}
+		<include refid="search" />
+		ORDER BY no DESC
+	</select>
+	
+	<select id="selectNotHistoryTotalCountReadN" parameterType="String" resultType="Integer">
+		SELECT count(*)
+		FROM not_history
+		WHERE receiver = #{memberEmail}
+		AND readyn = 'n'
+		<include refid="search" />
+	</select>
+	<select id="selectNotHistoryListReadN" resultType="notHistory" parameterType="hashmap">
+		SELECT *
+		FROM not_history
+		WHERE receiver = #{memberEmail}
+		AND readyn = 'n'
+		<include refid="search" />
+		ORDER BY no DESC
+	</select>
+	
+	<update id="updateReadYN" parameterType="Integer">
+		UPDATE not_history
+		SET readyn = 'y'
+		WHERE no = #{no}
+	</update>
+	
+	<select id="selectSeq" resultType="Integer">
+		SELECT NOT_HISTORY_SEQ.nextval
+		FROM dual
+	</select>
+	
+	<update id="InsertNotHistory" parameterType="notHistory">
+		INSERT INTO not_history (no, projectid, title, content, sender, receiver, readyn, regdate, type, url)
+		VALUES (#{no}, #{projectId}, #{title}, #{content}, #{sender}, #{receiver}, 'n', SYSDATE, #{type}, #{url})
+	</update>
+	
+	<select id="getNotHistoryDetail" parameterType="Integer" resultType="notHistory">
+		SELECT *
+		FROM not_history
+		WHERE no = #{no}
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site_notice-mapper">
+
+
+	<sql id="search">
+		<if test="searchType == 't'.toString()">
+			AND title LIKE '%'||#{keyword}||'%'
+		</if>
+		<if test="searchType == 'c'.toString()">
+			AND content LIKE '%'||#{keyword}||'%'			
+		</if>
+		<if test="searchType == 'tc'.toString()">
+			AND (
+				(title LIKE '%'||#{keyword}||'%')
+				OR
+				(content LIKE '%'||#{keyword}||'%')
+			)	
+		</if>
+	</sql>
+	<select id="getNoticeSequence" resultType="int">
+		SELECT SITE_BOARD_SEQ.nextval
+		FROM dual
+	</select>
+	
+	<update id="insertSiteNotice" parameterType="board">
+		INSERT INTO site_board (boardname, sno, title, content, writer, viewcnt, regdate, updatedate,startDate, endDate, deleteyn,  fileopenyn )
+		VALUES ('공지사항', #{sno}, #{title}, #{content}, #{writer}, 0, sysdate, sysdate, #{startDate} , #{endDate},'n', 'y')
+	</update>
+	
+	<select id="selectAllSiteNotice" parameterType="SearchCriteria" resultType="board">
+		SELECT *
+		FROM site_board
+		WHERE 1=1
+		AND boardname = '공지사항'
+		AND NOT (SYSDATE BETWEEN startdate AND enddate)
+		<include refid="search" />
+		ORDER BY sno DESC
+	</select>
+	
+	<update id="updateSiteNotice" parameterType="board">
+		UPDATE site_board
+		SET content = #{content},
+		title = #{title},
+		updatedate = sysdate,
+		startdate = #{startDate},
+		enddate = #{endDate}
+		WHERE sno = #{sno}
+	</update>
+	
+	<update id="deleteSiteNotice">
+		UPDATE site_board
+		SET deleteyn = 'y'
+		WHERE sno = #{sno}
+	</update>
+	
+	<update id="increaseSiteNoticeViewCount">
+		UPDATE site_board
+		SET viewcnt = viewcnt + 1
+		WHERE sno = #{sno}
+	</update>
+	
+	<select id="selectDetailSiteNotice" parameterType="int" resultType="board">
+		SELECT *
+		FROM site_board
+		WHERE sno = #{sno}
+	</select>
+	
+	<select id="selectCountSiteNotice" parameterType="SearchCriteria" resultType="int">
+		SELECT COUNT(*)
+		FROM site_board
+		WHERE boardname = '공지사항'
+		AND deleteyn = 'n'
+		<include refid="search" />
+		ORDER BY regdate DESC
+	</select>
+	
+	<select id="selectCurrentSiteNotice" resultType="board">
+		SELECT *
+		FROM site_board
+		WHERE boardname='공지사항'
+		AND SYSDATE BETWEEN startdate AND enddate
+		AND deleteyn = 'n'
+		ORDER BY regdate DESC
+	</select>
+</mapper>

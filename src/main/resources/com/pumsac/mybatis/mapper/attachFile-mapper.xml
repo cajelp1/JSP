@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="attachFile-mapper">
+
+	<!-- 회원가입시 프로필 이미지 등록 ****regdate 기본값을 sysdate로 설정하기!! -->
+	<update id="registProfileImage" parameterType="attach">
+		INSERT INTO
+		attachfile (no, attachDirectory, email, storedFilename, originFilename, extension, fileSize, regdate)
+		VALUES (#{no}, #{attachDirectory}, #{email} ,#{storedFilename}, #{originFilename}, #{extension},
+		#{fileSize} , SYSDATE)
+	</update>
+
+	<!-- 그 다음꺼 sequence 가져와 -->
+	<select id="countAttachFileSeq" resultType="int">
+		SELECT
+		ATTACHFILE_SEQ.nextval
+		FROM dual
+	</select>
+
+	<!-- 사이트 공지사항 File 첨부 -->
+	<update id="registSiteNoticeAttach" parameterType="attach">
+		INSERT INTO
+		attachfile (no, attachDirectory, sno, storedFilename, originFilename,
+		extension, fileSize, regdate)
+		VALUES (#{no}, #{attachDirectory} ,
+		#{sno}, #{storedFilename}, #{originFilename}, #{extension},
+		#{fileSize} , SYSDATE)
+	</update>
+
+	<!-- 글 등록하면서 바뀐 seq 가져오기 (현재 시퀀스) -->
+	<select id="getBoardCurrentSeq" resultType="int">
+		SELECT
+		SITE_BOARD_SEQ.currval
+		FROM dual
+	</select>
+
+	<!-- 게시글 첨부파일 가져오기 sno 가지고 -->
+	<select id="getAttachFileBySno" resultType="attach">
+		SELECT a.no, a.attachDirectory, pno, a.sno, mailno, perschno, storedFilename, originFilename, extension, fileSize, a.regdate
+		FROM site_board s, attachfile a
+		WHERE s.sno = a.sno
+		AND a.sno = #{sno}
+	</select>
+	<select id="proBoardCurrentSeq" resultType="int">
+		SELECT
+		PRO_BOARD_SEQ.currval
+		FROM dual
+	</select>
+	<update id="attachFilePmsNoticBoard" parameterType="attach">
+		INSERT INTO attachfile (no, attachDirectory, pno, storedFilename,
+		originFilename, extension, fileSize, regdate)
+		VALUES (#{no},
+		#{attachDirectory} , #{pno}, #{storedFilename}, #{originFilename},
+		#{extension}, #{fileSize} , SYSDATE)
+	</update>
+	<select id="getFileListAtPmsNoticBoardByPno" parameterType="int" resultType="attach">
+	select 
+	* 
+	from 
+	attachfile 
+	where pno=#{pno}
+	</select>
+
+		<!-- 사이트 공지사항 File 수정 -->
+	<update id="modifyAttachFile" parameterType="attach">
+		UPDATE attachfile SET
+		storedFilename = #{storedFilename},
+		originFilename = #{originFilename},
+		extension = #{extension},
+		filesize = #{fileSize},
+		regdate = SYSDATE
+		WHERE sno = #{sno}
+	</update>
+	
+	<!-- 회원 프로필 이미지 수정 -->
+	<update id="updateMemberProfileImg">
+		UPDATE attachfile SET
+		storedFilename = #{storedFilename},
+		originFilename = #{originFilename},
+		extension = #{extension},
+		filesize = #{fileSize},
+		regdate = SYSDATE
+		WHERE email = #{email}
+	</update>
+	
+	<select id="selectAttachFileInfo" parameterType="Integer" resultType="attach">
+		SELECT *
+		FROM attachfile
+		WHERE no = #{no}
+	</select>
+	
+	<delete id="deleteFileInfo" parameterType="Integer">
+		DELETE FROM attachfile
+		WHERE no = #{no}
+	</delete>
+	
+	<!-- email로 회원 프로필 이미지 가져오기 -->
+	<select id="getMemberProfileImg" parameterType="str" resultType="attach">
+		SELECT *
+		FROM attachfile
+		WHERE email = #{email}
+	</select>
+
+</mapper>
+
+
+
+

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms-userDashboard-mapper">
+    <select id="selectJobByEmail" resultType="prjps" parameterType="project">
+		select *
+		from
+		project
+		where
+		memberId=#{email}
+	</select>
+    <select id="selectProjectTotalStageOfCompletionByProjectId" resultType="prjps" parameterType="str">
+		SELECT
+		projectID, AVG(PROCESSPERCENT)
+		FROM PER_SCHEDULE
+		where PROJECTID = #{projectId}
+		GROUP BY projectID
+	</select>
+	<select id="selectProjectIndividualStageOfCompletionByPrjPsVO" resultType="prjps" parameterType="prjps">
+		SELECT
+		MEMBERID, AVG(PROCESSPERCENT)
+		FROM PER_SCHEDULE
+		where PROJECTID = #{projectId}
+		AND MEMBERID=#{memberId}
+		GROUP BY MEMBERID
+	</select>
+
+</mapper>
+
+
+
+
+

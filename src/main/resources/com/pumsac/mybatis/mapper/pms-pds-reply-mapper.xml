@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms-pds-reply-mapper">
+	
+	<!-- 해당 게시글 번호를 보내면 해당 게시판의 파일, 덧글 여부를 찾아오는 쿼리  -->
+	<select id="selectPdsFileReplyYN" parameterType="int" resultType="com.pumsac.command.PdsFileReplyDTO">
+		select fileyn, replyyn, fileDownloadyn
+		from pro_boardMaster
+		where boardName = (select boardName
+						from pro_board
+						where no = #{no}
+						)
+	</select>
+	
+	<!-- 리스트 가져오기 -->
+	<select id="selectPbnoReplies" parameterType="int" resultType="reply">
+		select r.no, r.pbno, r.content, r.writer, r.regdate, r.deleteyn, r.updateDate, 
+				m.name, m.nickname
+		from reply r, member m
+		where r.pbno = #{pbno}
+		and r.deleteyn = 'n'
+		and r.writer = m.email
+		order by r.no
+	</select>
+	
+	<select id="countPbnoReplies" resultType="int">
+		select count(*) from reply
+		where pbno = #{no}
+		and deleteyn = 'n'
+	</select>
+	
+	<!-- 다음 시퀀스 가져오는 쿼리 -->
+	<select id="selectNextReplySeq" resultType="int">
+		SELECT REPLY_SEQ.nextval
+		FROM dual
+	</select>
+	
+	<!-- 덧글 등록 -->
+	<update id="insertPbnoReply" parameterType="reply">
+		insert into reply(no, pbno, content, writer, regdate, deleteyn, updateDate)
+		values(#{no}, #{pbno}, #{content}, #{writer}, sysdate, 'n', sysdate)
+	</update>
+	
+	<!-- 덧글 수정 -->
+	<update id="updatePbnoReply" parameterType="reply">
+		update reply set 
+		content = #{content}, updateDate = sysdate
+		where no = #{no}
+	</update>
+	
+	<!-- 덧글 삭제 -->
+	<update id="deletePbnoReply" parameterType="reply">
+		update reply set deleteyn = 'y'
+		where no = #{no}
+	</update>
+	
+	
+	
+</mapper>

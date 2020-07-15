@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+.main-header.navbar {
+	background: #005596;
+}
+
+.nav-link {
+	color: white;
+}
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* Style the tab */
+.tab {
+	float: left;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #005596;
+	color: white;
+	width: 30%;
+	height: 240px;
+}
+
+.tablinks {
+	color: white;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+	display: block;
+	background-color: inherit;
+	padding: 10x 10px;
+	width: 100%;
+	border: none;
+	outline: none;
+	text-align: left;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+	background-color: #1E90FF;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+	background-color: #1E90FF;
+}
+
+/* Style the tab content */
+.tabcontent {
+	float: left;
+	padding: 0px 0px;
+	border: 1px solid #ccc;
+	width: 70%;
+	border-left: none;
+	height: 240px;
+}
+
+.nav-link.top-menu {
+	color: white;
+}
+/*버튼 css*/
+.dash-btn,.btn-blue {
+	background-color: #1E90FF;
+	color: white;
+}
+/*table thead tag css*/
+.table-header {
+	background-color: #1E90FF;
+	color: white;
+}
+#NotHistoryTitle{
+	width : 170px;
+	display: inline-block;
+	overflow:hidden;
+	text-overflow:ellipsis; 
+	white-space:nowrap;
+}
+#NotHistoryWriter{
+	width : 80px;
+	display: inline-block;
+	overflow:hidden;
+	text-overflow:ellipsis; 
+	white-space:nowrap;
+}
+.dropdown-menu-lg{
+	min-width : 350px;
+}
+/*label 오른쪽 정렬*/
+.label-right{
+	float: right;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.card-top{
+	background-color: #005596;
+	color: white;
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<decorators defaultdir="/WEB-INF/sitemesh/decorators">
+    <!-- one depth는 *	모든 경로는 ** -->
+    <!-- 마지막으로 갈수록 부분으로 작성한다. -->
+    <decorator name="main" page="main_decorator.jsp">
+        <pattern>/dsp/**</pattern>
+        <pattern>/dsp/my/detail</pattern>
+    </decorator>
+	
+    <decorator name="open_window" page="open_decorator.jsp">
+        <pattern>/dsp/**/regist*</pattern>
+        <pattern>/dsp/**/modify*</pattern>
+        <pattern>/dsp/**/detail*</pattern>
+        <pattern>/dsp/**/**/regist*</pattern>
+        <pattern>/dsp/**/**/modify*</pattern>
+        <pattern>/dsp/**/**/detail*</pattern>
+        <pattern>/dsp/room/reservation*</pattern>
+        <pattern>/dsp/room/init*</pattern>
+        <pattern>/dsp/sensor/**</pattern>
+        
+    </decorator>
+    <decorator name="pms_open_window" page="pms_open_decorator.jsp">
+        <pattern>/pms/team/notice/reg*</pattern>
+        <pattern>/pms/team/notice/modi*</pattern>
+        <pattern>/pms/team/notice/deta*</pattern>
+        <pattern>/pms/team/pds/reg*</pattern>
+        <pattern>/pms/team/pds/modi*</pattern>
+        <pattern>/pms/team/pds/deta*</pattern>
+        <pattern>/pms/notHistory/deta*</pattern>
+        <pattern>/pms/admin/team/reg*</pattern>
+        <pattern>/pms/team/personalSchedule/deta**</pattern>
+        <pattern>/pms/team/personalSchedule/modi*</pattern>
+        <pattern>/pms/admin/personalSchedule/regi*</pattern>
+        <pattern>/pms/admin/personalSchedule/modi*</pattern>
+        <pattern>/pms/admin/personalSchedule/deta*</pattern>
+        <pattern>/pms/admin/task/regi*</pattern>
+        <pattern>/pms/admin/task/modi*</pattern>
+        <pattern>/pms/admin/task/deta*</pattern>
+        <pattern>/pms/admin/team/regi*</pattern>
+        <pattern>/pms/admin/team/modi*</pattern>
+        <pattern>/pms/admin/team/deta*</pattern>
+        <pattern>/pms/team/officialSchedule/deta*</pattern>
+        <pattern>/pms/admin/member/regi*</pattern>
+        <pattern>/pms/admin/member/modi*</pattern>
+        <pattern>/pms/admin/member/deta*</pattern>
+        
+    </decorator>
+
+    <decorator name="pms_admin" page="pms_admin_decorator.jsp">
+        <pattern>/pms/admin/**</pattern>
+        <pattern>/pms/user/**</pattern>
+    </decorator>
+    <decorator name="pms_calendar" page="calendar_decorator.jsp">
+        <pattern>/pms/admin/team/calendar*</pattern>
+        <pattern>/pms/user/calendar*</pattern>
+        <pattern>/pms/team/personalSchedule/calendar*</pattern>
+        <pattern>/pms/team/officialSchedule/calendar*</pattern>
+    </decorator>
+    
+    <decorator name="pms_calendar" page="user_calendar_decorator.jsp">
+        <pattern>/pms/team/personalSchedule/calendar*</pattern>
+        <pattern>/pms/team/officialSchedule/calendar*</pattern>
+    </decorator>
+    
+    <decorator name="admin" page="admin_decorator.jsp">
+        <pattern>/dsp/admin/**</pattern>
+    </decorator>
+    <decorator name="open_pay_window" page="open_pay_decorator.jsp">
+        <pattern>/dsp/room/init*</pattern>
+
+    </decorator>
+    <decorator name="pms_board" page="pms_board_decorator.jsp">
+        <pattern>/pms/team/notice/**</pattern>
+        <pattern>/pms/team/pds/**</pattern>
+        <pattern>/pms/notHistory/**</pattern>
+        <pattern>/pms/team/personalSchedule/list**</pattern>
+        <pattern>/pms/team/officialSchedule/list**</pattern>
+    </decorator>
+    <excludes>    
+        <pattern>/replies/**</pattern>
+        <pattern>/commons/login*.do</pattern>
+        <pattern>/*.jsp</pattern>
+        <pattern>/resources/**</pattern>
+        <pattern>/**/*_succuess</pattern>
+        <pattern>/commons/member/find*</pattern>
+        <pattern>/dsp/room/reserva*</pattern>
+        <pattern>/**/uploadImg</pattern>
+        <pattern>/**/deleteImg</pattern>
+        <pattern>/pms/admin/personalSchedule/regist</pattern>
+        <pattern>/pms/admin/team/calendar/getTeamData</pattern>
+    </excludes>
+
+</decorators>
