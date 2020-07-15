@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	
+	<!-- db property 추가 -->
+	<properties resource="ibatis/config/db.properties" />
+	
+	<!-- ibatis를 처리하기 위한 환경설정 부분 -->
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="32" maxSessions="10"
+		maxTransactions="5" useStatementNamespaces="true" />
+	
+	<!-- 타입 alias -->
+	<typeAlias alias="memVO" type="com.jsp.dto.MemberVO"/>
+	
+	<!-- 
+	DB와의 연결을 처리하는 부분
+	SqlMapConfig.properties에 설정해 놓은 정보를 이용하여 구성한다.
+	 -->
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+		<!--
+			각종 설정을 직접 기술해서 처리할 수도 있다. 
+			<property name="JDBC.Driver" value="oracle.jdbc.driver.OracleDriver" />
+		 -->
+			<property name="JDBC.Driver" value="${driver}" />
+			<property name="JDBC.ConnectionURL" value="${url}" />
+			<property name="JDBC.Username" value="${username}" />
+			<property name="JDBC.Password" value="${password}" />
+		</dataSource>
+	</transactionManager>
+	
+	<!-- xml 문 -->
+	<sqlMap resource="ibatis/mapper/login.xml"/>
+	
+</sqlMapConfig>
+
+

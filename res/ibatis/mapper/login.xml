@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace = "login">
+
+	<!-- 로그인 여부 확인 -->
+	<select id="isLogin" parameterClass="memVO" resultClass="memVo">
+		select * from member
+		where id=#id# and pwd=#pwd#
+	</select>
+	
+</sqlMap>
