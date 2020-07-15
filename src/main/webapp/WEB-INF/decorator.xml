@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- url과 template 규정 -->
+<decorators defaultdir="/WEB-INF/views/decorators">
+	
+	<decorator name="main" page="decorator.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+	
+	<decorator name="open_window" page="openWindow_decorator.jsp">
+		<pattern>/**/*</pattern>
+	</decorator>
+	
+	<excludes>
+		<pattern>/commons/login*</pattern>
+		<pattern>/commons/userInfo*</pattern>
+		<pattern>/commons/submenuHql*</pattern>
+	</excludes>
+	
+</decorators>
